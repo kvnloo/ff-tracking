@@ -99,6 +99,9 @@ red lock frames tear the bass. See [Slab score](#slab-score).
 
 ## Quick start
 
+macOS uses Metal; Windows uses Vulkan. For Windows requirements and the PowerShell
+render pipeline, see [Windows setup](docs/WINDOWS.md). The macOS instructions follow.
+
 Requirements: macOS with Apple silicon (Skia on Metal), Rust, ffmpeg, Python 3 with `numpy`
 and `scipy`. The README images also need Pillow and `img2webp`.
 
