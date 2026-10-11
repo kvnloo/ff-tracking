@@ -1,8 +1,12 @@
 use fframes::{
     CombinedMediaProvider, EncoderOptions, MediaDirectory, MediaProvider, RenderOptions, cli,
 };
+#[cfg(not(windows))]
+use fframes_skia_renderer::metal::SkiaMetalCtx as SkiaGpuCtx;
+#[cfg(windows)]
+use fframes_skia_renderer::vulkan::SkiaVulkanCtx as SkiaGpuCtx;
 use fframes_skia_renderer::{
-    SkiaFFramesRenderer, SkiaPipelineConcurrencyPolicy, SkiaPipelineConfig, metal::SkiaMetalCtx,
+    SkiaFFramesRenderer, SkiaPipelineConcurrencyPolicy, SkiaPipelineConfig,
 };
 use lens::{HEIGHT, LensVideo, WIDTH};
 use std::process::ExitCode;
@@ -17,7 +21,7 @@ fn main() -> ExitCode {
     let fonts = fonts_dir.process_media_source().expect("fonts");
     let media = CombinedMediaProvider::from([&pass as &dyn MediaProvider, &fonts]);
     let video = LensVideo::new();
-    let gpu = SkiaMetalCtx::new(WIDTH, HEIGHT).expect("GPU context");
+    let gpu = SkiaGpuCtx::new(WIDTH, HEIGHT).expect("GPU context");
 
     cli::new(
         &video,
@@ -32,16 +36,23 @@ fn main() -> ExitCode {
             ..Default::default()
         },
     )
-    .backend(
-        SkiaFFramesRenderer::new_metal(
-            &gpu,
+    .backend(SkiaFFramesRenderer::new(
+        if cfg!(windows) {
+            // Bound GPU contexts and frame buffers to limit memory use on Windows.
+            SkiaPipelineConfig {
+                concurrency_policy: SkiaPipelineConcurrencyPolicy::Concurrency(2),
+                encoder_threads: 2,
+                buffer_queue_size: 2,
+                ..Default::default()
+            }
+        } else {
             SkiaPipelineConfig {
                 concurrency_policy: SkiaPipelineConcurrencyPolicy::MaxPerformance,
                 ..Default::default()
-            },
-        )
-        .expect("skia renderer"),
-    )
+            }
+        },
+        &gpu,
+    ))
     .preview(fframes_native_player::cli_preview)
     .default_output("out/tracking.mp4")
     .run()
