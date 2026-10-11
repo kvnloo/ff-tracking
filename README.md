@@ -175,6 +175,18 @@ Change the text, a palette or the camera, run `tools/render.sh`, and the tracker
 labels and beeps all follow. `cargo test -p hud` checks that every line fits the screen and
 that the camera keeps every target in frame.
 
+## Community
+
+I open-sourced this on a Friday. This is what people made with it since.
+
+- [@MGasperowicz](https://x.com/MGasperowicz/status/2108692059431342428) (nooga) scored it in [Slab](https://github.com/nooga/slab). The score lives in this repo: [#1](https://github.com/mrsarac/ff-tracking/pull/1), and how he made it is in [#2](https://github.com/mrsarac/ff-tracking/issues/2).
+- [@tanzim31](https://x.com/tanzim31/status/2108701207674208744) rendered a promo video for alt.r with it on Windows.
+- [@TheoGavriilidis](https://x.com/TheoGavriilidis/status/2108615586653823133) made "AI vs SI".
+- [@joinmorse](https://x.com/joinmorse/status/2108626603513401652) made their own tracker version for Morse.
+- [@isitqday](https://x.com/isitqday/status/2109106777321283940) used it for the HUD in a music video ([how](https://x.com/isitqday/status/2109113355239842060)).
+
+Made your own version? Open an issue or tag [@0xsarac](https://x.com/0xsarac) and it goes here.
+
 ## Layout
 
 ```text
