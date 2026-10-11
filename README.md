@@ -21,6 +21,8 @@ No footage, no stock audio: every pixel and every sound comes from code.
 [How it works](#how-it-works) ·
 [Quick start](#quick-start)
 
+**Part 2 → [ff-unmute](https://github.com/mrsarac/ff-unmute): the one you can unmute. Music written in code, every number on screen measured from the sound.**
+
 <sub>fframes studies · <b>#1 ff-tracking</b> · <a href="https://github.com/mrsarac/ff-unmute">#2 ff-unmute</a>, the one you can unmute</sub>
 
 </div>
