@@ -90,7 +90,7 @@ screen hum, a bit-crushed glitch on each cut, a click per keystroke and a pentat
 per lock, panned to the box. It adds a riser into the collapse and a chime with a sub hit on
 `Done`. Loudness is measured with ffmpeg's `ebur128` and set to -14 LUFS.
 
-**Score** (optional): [`score/score.py`](score/score.py) is a second soundtrack, made in
+**Score** (optional): [`score/src/arrangement.rs`](score/src/arrangement.rs) is a second soundtrack, made in
 [Slab](https://github.com/nooga/slab): a darker, heavier piece at 120 BPM, so every cut lands
 on a beat. It reads the same `out/tracks.json`, plus `out/camera.json` from the `camera`
 binary, so the mix follows the lens. The tracked box pans the lock blips and keystrokes, the
@@ -130,19 +130,46 @@ python3 -I tools/readme_media.py           # rebuild the images in this README
 
 ```bash
 tools/score.sh                          # uses the committed render, score/score.wav
-SLAB=/path/to/slab tools/score.sh       # renders the score again from score/score.py
+SLAB=/path/to/slab tools/score.sh       # renders the score again from Rust
+SLAB=/path/to/slab SCORE_IMPL=python tools/score.sh  # original Python reference
 ```
 
 Rendering needs a [Slab](https://github.com/nooga/slab) checkout built with
-`zig build -Doptimize=ReleaseFast`. `score/score.py` writes the project
+`zig build -Doptimize=ReleaseFast`. The Rust `score` crate uses the MIT-licensed
+[slabkit-rs](https://github.com/nooga/slabkit-rs) library to write the project
 `score/ff_tracking.slab`, which opens in Slab's arrangement and mixer, and renders it headless.
 The render runs past the picture for the reverb tail, so `score.sh` cuts it at 6 s and fades
 it with the fade to black. It comes out around -10.7 LUFS with a -1 dBTP true peak.
 
+Generate just the editable project, or render it separately:
+
+```bash
+SLAB=/path/to/slab cargo run -p score
+SLAB=/path/to/slab cargo run -p score -- --render --stems
+cargo run -p score -- --help
+```
+
+The Rust port reproduces the committed Python project's complete JSON values,
+including Python's seeded random notes, note rounding, colors, clip names and
+automation ordering. `cargo test -p score` checks every field against the existing
+project using fixed resource fixtures; it needs neither Slab nor Python. For a
+live comparison against your Slab resources, including changed camera/event
+inputs and identical float32 renders, run:
+
+```bash
+SLAB=/path/to/slab python3 tools/check_score.py --render
+```
+
+Python is used only by the optional reference/comparison path; the Rust score
+and `tools/score.sh` need no Python packages when `SLAB` is set. Python remains
+part of the default `tools/render.sh` sound pipeline.
+
 | File | What it is |
 |---|---|
 | `hud/src/bin/camera.rs` | writes `out/camera.json`: per frame, the zoom, tilt and roll, the tracked box's position in the output and where the filmed screen's centre lands |
-| `score/score.py` | the score: reads both JSON files, writes the Slab project, renders it |
+| `score/src/arrangement.rs` | the Rust score: reads camera/event data via slabkit-rs, writes the same Slab project |
+| `score/score.py` | unchanged Python reference for the score |
+| `tools/check_score.py` | live Python/Rust project and optional render parity check |
 | `score/ff_tracking.slab/` | the generated Slab project (tracks, notes, automation, effects) |
 | `score/score.wav` | the score rendered and cut to 6 s, 48 kHz, so the video builds without Slab |
 | `tools/score.sh` | the whole pipeline with the score |
@@ -157,6 +184,8 @@ is in [#2](https://github.com/mrsarac/ff-tracking/issues/2).
 **License note:** `score/score.py` imports `slabkit`, which ships with Slab under GPL-3.0. slabkit is not
 part of this repo and Slab is needed only to re-render the score. Its author offers `score/score.py`,
 the project in `score/ff_tracking.slab/` and `score/score.wav` under this repo's MIT license.
+The Rust score and `slabkit-rs` are MIT licensed and invoke Slab as an external
+renderer. The MT19937 algorithm keeps its BSD notice in `licenses/MT19937.txt`.
 
 ## Make it yours
 
@@ -198,7 +227,7 @@ flat/          pass 1: the screen, 3840×2160
 lens/          pass 2: lens/shaders/lens.sksl and the camera-space tracker
 tools/         render.sh (whole pipeline), sfx.py (sound), readme_media.py (these images),
                score.sh (the pipeline with the Slab score)
-score/         the Slab score: score.py, the ff_tracking.slab project, score.wav
+score/         the Rust Slab score crate, Python reference, ff_tracking.slab project, score.wav
 docs/          design spec, prompts and decisions, fframes contributions
 ```
 
