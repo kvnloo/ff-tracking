@@ -216,6 +216,7 @@ I open-sourced this on a Friday. This is what people made with it since.
 - [@TheoGavriilidis](https://x.com/TheoGavriilidis/status/2108615586653823133) made "AI vs SI".
 - [@joinmorse](https://x.com/joinmorse/status/2108626603513401652) made their own tracker version for Morse.
 - [@isitqday](https://x.com/isitqday/status/2109106777321283940) used it for the HUD in a music video ([how](https://x.com/isitqday/status/2109113355239842060)).
+- [@PurzBeats](https://x.com/PurzBeats/status/2110001806319526048) made a kinetic-typography lyric video with it.
 
 Made your own version? Open an issue or tag [@0xsarac](https://x.com/0xsarac) and it goes here.
 
